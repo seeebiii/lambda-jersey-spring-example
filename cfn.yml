@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Example about how to use Jersey and Spring together in AWS Lambda.
+
+Outputs:
+  OneUrl:
+    Description: Api for TestOneResource
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/one'
+  TwoUrl:
+    Description: Api for TestTwoResource
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/two'
+
+Resources:
+  JerseySpringHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: de.sebastianhesse.aws.examples.JerseySpringHandler
+      Runtime: java8
+      MemorySize: 320
+      Timeout: 60
+      CodeUri: target/lambda-jersey-spring-example-1.0.0.jar
+      Policies: AWSLambdaBasicExecutionRole
+      Events:
+        JerseySpringProxy:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
